@@ -1,4 +1,31 @@
 /**
+ * 木造シート・S構造シート・R構造シートの全データ行を削除します。
+ * ヘッダー行（1行目）は保持されます。
+ * GASスクリプトエディタからこの関数を直接実行してください。
+ */
+function clearAllSheetData() {
+  const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+  const targetSheets = ALL_DATA_SHEET_NAMES;
+
+  targetSheets.forEach(sheetName => {
+    const sheet = ss.getSheetByName(sheetName);
+    if (!sheet) {
+      Logger.log(`シート「${sheetName}」が見つかりません。スキップします。`);
+      return;
+    }
+    const lastRow = sheet.getLastRow();
+    if (lastRow <= 1) {
+      Logger.log(`シート「${sheetName}」: データ行なし。スキップします。`);
+      return;
+    }
+    sheet.deleteRows(2, lastRow - 1);
+    Logger.log(`シート「${sheetName}」: ${lastRow - 1}行のデータを削除しました。`);
+  });
+
+  Logger.log('✅ 全シートのデータ削除が完了しました。');
+}
+
+/**
  * データの型を厳密に検証するデバッグ関数
  * Flutterの InvestigationUnit モデルの要求（String or List<String>）を満たしているかチェックします。
  */

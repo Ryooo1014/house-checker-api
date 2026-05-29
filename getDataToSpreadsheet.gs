@@ -38,11 +38,11 @@ function getDataToSpreadsheet(sheetName, conditions, keysToExtract) {
     return { key, index, targetValue: conditions[key] };
   });
 
-  // 2. 抽出キーのヘッダーを取得
+  // 2. 抽出キーのヘッダーを取得（列が存在しない場合はデフォルト値を使用）
   const extractIndices = keysToExtract.map(key => {
     const index = header.indexOf(key);
     if (index === -1) {
-      throw new Error(`抽出キー「${key}」がシートヘッダーに見つかりません。`);
+      Logger.log(`警告: 抽出キー「${key}」がシート「${sheetName}」のヘッダーに見つかりません。デフォルト値(0)を使用します。`);
     }
     return { key, index };
   });
@@ -82,8 +82,9 @@ function getDataToSpreadsheet(sheetName, conditions, keysToExtract) {
     if (match) {
       const extractedObject = {};
       extractIndices.forEach(({ key, index }) => {
-        let value = row[index];
-        
+        // 列が存在しない場合(index === -1)はデフォルト値0を使用
+        let value = index !== -1 ? row[index] : 0;
+
         // 画像URL（Imagesで終わるキー）の配列化処理
         if (key.endsWith('Images') && typeof value === 'string' && value.includes(',')) {
           value = value.split(',').map(item => item.trim()).filter(item => item.length > 0);
