@@ -211,10 +211,11 @@ if(token) {
         throw new Error(`不明なモードが指定されました: ${mode}。`);
     }
 
-    let response = { 
-      status: "success", 
+    let response = {
+      status: "success",
       mode_executed: mode,
-      sheets_queried: sheetNames
+      sheets_queried: sheetNames,
+      data: resultData
     };
 
     output.setContent(JSON.stringify(response));
